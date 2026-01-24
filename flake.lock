@@ -1,0 +1,62 @@
+{
+  "nodes": {
+    "datum-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1752694099,
+        "narHash": "sha256-xsrdZ8kpbgYrmRgIuX/0ouYFMPALv0hJKh57pfcIl44=",
+        "ref": "refs/heads/master",
+        "rev": "cd7b7a30d681b58420bc24d09ea561a620cbd4ac",
+        "revCount": 313,
+        "type": "git",
+        "url": "https://github.com/OCEAN-xyz/datum_gateway.git"
+      },
+      "original": {
+        "rev": "cd7b7a30d681b58420bc24d09ea561a620cbd4ac",
+        "type": "git",
+        "url": "https://github.com/OCEAN-xyz/datum_gateway.git"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1769018530,
+        "narHash": "sha256-MJ27Cy2NtBEV5tsK+YraYr2g851f3Fl1LpNHDzDX15c=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-bip110": {
+      "locked": {
+        "lastModified": 1769086749,
+        "narHash": "sha256-J6K4Cllv5Gul9V9aSx+wNXBsvS1M+iDXhm2aQZv9m7M=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "36df45c9ad4ed7924d85a7b2991dc64125d5af71",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "pull/482673/head",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "datum-src": "datum-src",
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-bip110": "nixpkgs-bip110"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
