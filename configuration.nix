@@ -22,9 +22,10 @@ let
       coinbase_tag_secondary = secrets.datum_coinbase_secondary;
     };
     logger = {
-      log_level_console = 1;
+      log_level_console = 0;
     };
     datum = {
+      pool_host = ""; # defaults to OCEAN; setting empty should enforce *solo* (lottery) mining
       pooled_mining_only = false; # defaults to `true`; which contributes your hash to OCEAN (not *solo*) 
     };
   };
