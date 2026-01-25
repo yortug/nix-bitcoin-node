@@ -5,7 +5,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # grab datum-gateway source below, need to change commit hash when updated
     datum-src = {
-      url = "git+https://github.com/OCEAN-xyz/datum_gateway.git?rev=5b061233a3d3323771b2be98e17f543e59346619";
+      #url = "git+https://github.com/OCEAN-xyz/datum_gateway.git?rev=5b061233a3d3323771b2be98e17f543e59346619";
+      url = "git+https://github.com/yortug/datum_gateway.git?rev=eb63a28bc9634052fb6b9218b511939141a2c500";
       flake = false;
     };
     # grab bip-110 specific pre-release source below, need to change commit hash when updated

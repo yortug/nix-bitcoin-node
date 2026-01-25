@@ -3,18 +3,18 @@
     "datum-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1767670605,
-        "narHash": "sha256-EKU+c22t/vc9FC4wg7+p3C+dJO61ZIGsEn9c1q1TBFQ=",
+        "lastModified": 1769323415,
+        "narHash": "sha256-9k/M7+rKa57CoiaXSHValwhqpue7yJLhsChLq2WrLxY=",
         "ref": "refs/heads/master",
-        "rev": "5b061233a3d3323771b2be98e17f543e59346619",
-        "revCount": 364,
+        "rev": "eb63a28bc9634052fb6b9218b511939141a2c500",
+        "revCount": 366,
         "type": "git",
-        "url": "https://github.com/OCEAN-xyz/datum_gateway.git"
+        "url": "https://github.com/yortug/datum_gateway.git"
       },
       "original": {
-        "rev": "5b061233a3d3323771b2be98e17f543e59346619",
+        "rev": "eb63a28bc9634052fb6b9218b511939141a2c500",
         "type": "git",
-        "url": "https://github.com/OCEAN-xyz/datum_gateway.git"
+        "url": "https://github.com/yortug/datum_gateway.git"
       }
     },
     "nixpkgs": {
