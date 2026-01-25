@@ -18,11 +18,14 @@ let
     };
     mining = {
       pool_address = secrets.datum_mining_address;
-      coinbase_tag_primary = "DATUM Gateway";
+      coinbase_tag_primary = secrets.datum_coinbase_primary; # ignored when mining in a pool 
       coinbase_tag_secondary = secrets.datum_coinbase_secondary;
     };
     logger = {
       log_level_console = 1;
+    };
+    datum = {
+      pooled_mining_only = false; # defaults to `true`; which contributes your hash to OCEAN (not *solo*) 
     };
   };
 

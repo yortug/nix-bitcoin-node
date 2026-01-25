@@ -8,7 +8,8 @@
   btc_rpc_username = "FILL_THIS_IN";
   btc_rpc_password_hashed = "FILL_THIS_IN";  # generated via: `rpcauth.py` (comes from bitcoin repo)
   datum_mining_address = "FILL_THIS_IN";  # reserved bc1 address for reward
-  datum_coinbase_secondary = "FILL_THIS_IN";  # little tag to put on the block if you win
+  datum_coinbase_primary = "FILL_THIS_IN";  # `miner` assosciated with block if you hit (ignored when pooled)
+  datum_coinbase_secondary = "FILL_THIS_IN";  # `user` assosciated with block if you hit
   git_email = "FILL_THIS_IN";
   git_user = "FILL_THIS_IN";
 }
