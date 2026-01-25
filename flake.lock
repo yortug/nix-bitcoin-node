@@ -3,27 +3,27 @@
     "datum-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1752694099,
-        "narHash": "sha256-xsrdZ8kpbgYrmRgIuX/0ouYFMPALv0hJKh57pfcIl44=",
+        "lastModified": 1767670605,
+        "narHash": "sha256-EKU+c22t/vc9FC4wg7+p3C+dJO61ZIGsEn9c1q1TBFQ=",
         "ref": "refs/heads/master",
-        "rev": "cd7b7a30d681b58420bc24d09ea561a620cbd4ac",
-        "revCount": 313,
+        "rev": "5b061233a3d3323771b2be98e17f543e59346619",
+        "revCount": 364,
         "type": "git",
         "url": "https://github.com/OCEAN-xyz/datum_gateway.git"
       },
       "original": {
-        "rev": "cd7b7a30d681b58420bc24d09ea561a620cbd4ac",
+        "rev": "5b061233a3d3323771b2be98e17f543e59346619",
         "type": "git",
         "url": "https://github.com/OCEAN-xyz/datum_gateway.git"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1769018530,
-        "narHash": "sha256-MJ27Cy2NtBEV5tsK+YraYr2g851f3Fl1LpNHDzDX15c=",
+        "lastModified": 1769170682,
+        "narHash": "sha256-oMmN1lVQU0F0W2k6OI3bgdzp2YOHWYUAw79qzDSjenU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+        "rev": "c5296fdd05cfa2c187990dd909864da9658df755",
         "type": "github"
       },
       "original": {
