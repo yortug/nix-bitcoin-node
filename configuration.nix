@@ -254,6 +254,7 @@ in
     electrs
     datum
     psmisc
+    btc-rpc-explorer
   ];
 
   system.stateVersion = "25.05";
