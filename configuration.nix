@@ -74,7 +74,8 @@ in
           8332
           50001
           23334
-        ]; # ssh, bitcoin rpc, electrs rpc, datum gateway
+          3002
+        ]; # ssh, bitcoin, electrs, datum gateway, btc-rpc-explorer
       };
     };
   };
@@ -209,6 +210,42 @@ in
     };
   };
 
+  systemd.services.btc-rpc-explorer = {
+    description = "BTC RPC Explorer";
+    after = [ "bitcoind-default.service" "network.target" "electrs.service" ];
+    wantedBy = [ "multi-user.target" ];
+    requires = [ "bitcoind-default.service" ];
+    wants = [ "electrs.service" ];
+
+    serviceConfig = {
+      User = secrets.username;
+      Group = secrets.username;
+      WorkingDirectory = "/home/${secrets.username}";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'while [ ! -f /home/${secrets.username}/.bitcoin/.cookie ]; do echo \"Waiting for bitcoind cookie...\"; sleep 1; done'";
+      ExecStart = "${pkgs.btc-rpc-explorer}/bin/btc-rpc-explorer";
+      Restart = "always";
+      RestartSec = 10;
+      StandardOutput = "syslog";
+      StandardError = "syslog";
+      SyslogIdentifier = "btc-rpc-explorer";
+      PrivateTmp = true;
+      ProtectSystem = "full";
+      NoNewPrivileges = true;
+      #MemoryDenyWriteExecute = true; # doesn't let jscript load when enabled
+    };
+    environment = {
+      BTCEXP_HOST = "0.0.0.0";
+      BTCEXP_PORT = "3002";
+      BTCEXP_BITCOIND_HOST = "127.0.0.1";
+      BTCEXP_BITCOIND_PORT = "8332";
+      BTCEXP_BITCOIND_COOKIE = "/home/${secrets.username}/.bitcoin/.cookie";
+      BTCEXP_ADDRESS_API = "electrum";
+      BTCEXP_ELECTRUM_SERVERS = "tcp://127.0.0.1:50001"; # can be changed to tls://...:50002 if needed
+      BTCEXP_PRIVACY_MODE = "true";
+      BTCEXP_NO_RATES = "true";
+    };
+  };
+
   programs.bash = {
     #enable = true; # deprecated?
     promptInit = ''
@@ -254,6 +291,7 @@ in
     electrs
     datum
     psmisc
+    btc-rpc-explorer
   ];
 
   system.stateVersion = "25.05";
