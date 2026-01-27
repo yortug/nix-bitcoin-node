@@ -15,10 +15,15 @@
       url = "github:JoinMarket-Org/joinmarket-clientserver/v0.9.11";
       flake = false;
     };
+    
+    chromalog-src = {
+      url = "github:freelan-developers/chromalog/1.0.5";
+      flake = false;
+    };
   };
 
   outputs =
-    { self, nixpkgs, datum-src, nixpkgs-bip110, joinmarket-src, ... }@inputs: let
+    { self, nixpkgs, datum-src, nixpkgs-bip110, joinmarket-src, chromalog-src, ... }@inputs: let
       secrets = import ./secrets.nix;
       system = "x86_64-linux";
 
@@ -38,14 +43,25 @@
           install -Dm755 datum_gateway $out/bin/datum_gateway
         '';
       };
+      
+      chromalog = pkgs.python312Packages.buildPythonPackage rec {
+        pname = "chromalog";
+        version = "1.0.5";
+        src = chromalog-src;
+        propagatedBuildInputs = [ pkgs.python312Packages.colorama ];  # ← required runtime dep
+        doCheck = false;
+        format = null;
+        pyproject = false;
+      };
 
-    joinmarket = pkgs.stdenv.mkDerivation rec {
+      joinmarket = pkgs.stdenv.mkDerivation rec {
         pname = "joinmarket";
         version = "0.9.11";
         src = joinmarket-src;
         nativeBuildInputs = [ pkgs.makeWrapper ];
         buildInputs = [
           (pkgs.python312.withPackages (ps: with ps; [twisted txtorcon pyopenssl service-identity autobahn pyaes pycryptodomex pyjwt requests urllib3 chardet certifi idna matplotlib python-bitcoinlib coincurve]))
+          chromalog
         ];
 
         installPhase = ''

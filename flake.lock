@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "chromalog-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1464179965,
+        "narHash": "sha256-4CYfyM7aX12oLES9h/4liKVcmEi+IJn/5Jvyl0XRRF4=",
+        "owner": "freelan-developers",
+        "repo": "chromalog",
+        "rev": "acf49f3200d711d15c2a2392166b4f2ad3fe5930",
+        "type": "github"
+      },
+      "original": {
+        "owner": "freelan-developers",
+        "ref": "1.0.5",
+        "repo": "chromalog",
+        "type": "github"
+      }
+    },
     "datum-src": {
       "flake": false,
       "locked": {
@@ -68,6 +85,7 @@
     },
     "root": {
       "inputs": {
+        "chromalog-src": "chromalog-src",
         "datum-src": "datum-src",
         "joinmarket-src": "joinmarket-src",
         "nixpkgs": "nixpkgs",
