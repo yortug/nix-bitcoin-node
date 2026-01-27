@@ -3,6 +3,7 @@
   lib,
   pkgs,
   datum,
+  joinmarket,
   ...
 }:
 let
@@ -292,6 +293,8 @@ in
     datum
     psmisc
     btc-rpc-explorer
+    joinmarket
+    crudini
   ];
 
   system.stateVersion = "25.05";

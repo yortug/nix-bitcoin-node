@@ -17,6 +17,23 @@
         "url": "https://github.com/yortug/datum_gateway.git"
       }
     },
+    "joinmarket-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1708593180,
+        "narHash": "sha256-sYHhhp9BZz8udJuVAfwdt474OQPiye2ae5DOn5v5yEQ=",
+        "owner": "JoinMarket-Org",
+        "repo": "joinmarket-clientserver",
+        "rev": "f4c2b1b86857762e1ca2fa6442bceb347523efda",
+        "type": "github"
+      },
+      "original": {
+        "owner": "JoinMarket-Org",
+        "ref": "v0.9.11",
+        "repo": "joinmarket-clientserver",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1769170682,
@@ -52,6 +69,7 @@
     "root": {
       "inputs": {
         "datum-src": "datum-src",
+        "joinmarket-src": "joinmarket-src",
         "nixpkgs": "nixpkgs",
         "nixpkgs-bip110": "nixpkgs-bip110"
       }
