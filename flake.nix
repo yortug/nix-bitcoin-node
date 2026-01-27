@@ -45,34 +45,35 @@
         src = joinmarket-src;
         nativeBuildInputs = [ pkgs.makeWrapper ];
         buildInputs = [
-          (pkgs.python312.withPackages (ps: with ps; [twisted txtorcon pyopenssl service-identity autobahn pyaes pycryptodomex pyjwt requests urllib3 chardet certifi idna matplotlib]))
+          (pkgs.python312.withPackages (ps: with ps; [twisted txtorcon pyopenssl service-identity autobahn pyaes pycryptodomex pyjwt requests urllib3 chardet certifi idna matplotlib python-bitcoinlib coincurve]))
         ];
 
         installPhase = ''
-        runHook preInstall
+          runHook preInstall
 
-        libdir=$out/lib/joinmarket
-        mkdir -p $libdir
-        cp -r jm* scripts/*.py $libdir/   # ← files are here (no $sourceRoot needed)
+          libdir=$out/lib/joinmarket
+          mkdir -p $libdir
+          cp -r src/* $libdir/
+          cp -r scripts/*.py $libdir/
 
-        mkdir -p $out/bin
-        for script in scripts/*.py; do
-          base=$(basename "$script" .py)
-          makeWrapper ${pkgs.python312}/bin/python "$out/bin/jm-$base" \
-            --add-flags "$libdir/$base.py" \
+          mkdir -p $out/bin
+
+          for tool in wallet-tool.py sendpayment.py tumbler.py; do
+            base=''${tool%.py}
+            makeWrapper ${pkgs.python312}/bin/python "$out/bin/jm-$base" \
+              --add-flags "$libdir/$tool" \
+              --prefix PYTHONPATH : "$libdir"    # ← src/ packages are now directly importable
+          done
+
+          obw=$out/lib/joinmarket-ob-watcher
+          mkdir -p $obw
+          cp scripts/obwatch/ob-watcher.py "$obw/ob-watcher"
+          cp -r scripts/obwatch/{orderbook.html,sybil_attack_calculations.py,vendor} "$obw/"
+          makeWrapper ${pkgs.python312}/bin/python "$out/bin/jm-ob-watcher" \
+            --add-flags "$obw/ob-watcher" \
             --prefix PYTHONPATH : "$libdir"
-        done
 
-        # ob-watcher
-        obw=$out/lib/joinmarket-ob-watcher
-        mkdir -p $obw
-        cp scripts/obwatch/ob-watcher.py "$obw/ob-watcher"
-        cp -r scripts/obwatch/{orderbook.html,sybil_attack_calculations.py,vendor} "$obw/"
-        makeWrapper ${pkgs.python312}/bin/python "$out/bin/jm-ob-watcher" \
-          --add-flags "$obw/ob-watcher" \
-          --prefix PYTHONPATH : "$libdir"
-
-        runHook postInstall
+          runHook postInstall
         '';
       };
       
