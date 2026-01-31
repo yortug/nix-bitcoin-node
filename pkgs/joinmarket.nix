@@ -146,12 +146,47 @@ nativeBuildInputs = with pkgs-old.python3Packages; [
 
   # Skip tests (they need tor + bitcoind + miniircd setup)
   doCheck = false;
-
+  
   pythonImportsCheck = [
     "jmbase"
     "jmbitcoin"
     "jmclient"
     "jmdaemon"
   ];
+  
+  makeWrapperArgs = [
+    "--prefix PATH : ${pkgs-old.lib.makeBinPath [ pkgs-old.python3 ]}"
+    "--set PYTHONPATH ${placeholder "out"}/${pkgs-old.python3.sitePackages}"
+  ];
+
+postInstall = ''
+  mkdir -p $out/bin
+  cpJm() {
+    local src_file="scripts/$1"
+    local dest_name="jm-''${1%.py}"
+    cp "$src_file" "$out/bin/$dest_name"
+  }
+  cpJm add-utxo.py
+  cpJm bond-calculator.py
+  cpJm bumpfee.py
+  cpJm genwallet.py
+  cpJm receive-payjoin.py
+  cpJm sendpayment.py
+  cpJm sendtomany.py
+  cpJm tumbler.py
+  cpJm wallet-tool.py
+  cpJm yg-privacyenhanced.py
+  cp scripts/joinmarketd.py     "$out/bin/joinmarketd"     || true
+  cp scripts/jmwalletd.py       "$out/bin/jmwalletd"       || true
+  local obw="$out/libexec/joinmarket-ob-watcher"
+  mkdir -p "$obw"
+  cp scripts/obwatch/ob-watcher.py "$obw/ob-watcher"
+  cp -r scripts/obwatch/{orderbook.html,sybil_attack_calculations.py,vendor} "$obw/" || true
+  chmod +x "$out/bin/"* "$obw/ob-watcher" || true
+  patchShebangs "$out/bin"
+  patchShebangs "$obw"
+  ln -s "$obw/ob-watcher" "$out/bin/jm-ob-watcher"
+'';
+
 
 }
