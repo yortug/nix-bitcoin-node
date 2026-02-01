@@ -370,6 +370,7 @@ in
     btc-rpc-explorer
     joinmarket
     crudini
+    tmux
   ];
 
   system.stateVersion = "25.05";
