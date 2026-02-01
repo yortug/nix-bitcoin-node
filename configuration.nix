@@ -44,6 +44,9 @@ let
       #max_cj_fee_abs = "0.001";
       #max_cj_fee_rel = "0.003";
     };
+    "MESSAGING:onion" = {
+      directory_nodes = "jmarketxf5wc4aldf3slm5u6726zsky52bqnfv6qyxe5hnafgly6yuyd.onion:5222,coinjointovy3eq5fjygdwpkbcdx63d7vd4g32mw7y553uj3kjjzkiqd.onion:5222,satoshi2vcg5e2ept7tjkzlkpomkobqmgtsjzegg6wipnoajadissead.onion:5222,nakamotourflxwjnjpnrk7yc2nhkf6r62ed4gdfxmmn5f4saw5q5qoyd.onion:5222,odpwaf67rs5226uabcamvypg3y4bngzmfk7255flcdodesqhsvkptaid.onion:5222"; 
+    };
   };
   
   applyJoinmarketConfig = lib.concatStringsSep "\n" (
@@ -106,7 +109,8 @@ in
           50001
           23334
           3002
-        ]; # ssh, bitcoin, electrs, datum gateway, btc-rpc-explorer
+          62601
+        ]; # ssh, bitcoin, electrs, datum gateway, btc-rpc-explorer, jm orderbook
       };
     };
   };
@@ -371,6 +375,7 @@ in
     joinmarket
     crudini
     tmux
+    python3
   ];
 
   system.stateVersion = "25.05";

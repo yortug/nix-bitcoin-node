@@ -177,14 +177,10 @@ postInstall = ''
   cpJm yg-privacyenhanced.py
   cp scripts/joinmarketd.py     "$out/bin/joinmarketd"     || true
   cp scripts/jmwalletd.py       "$out/bin/jmwalletd"       || true
-  local obw="$out/libexec/joinmarket-ob-watcher"
-  mkdir -p "$obw"
-  cp scripts/obwatch/ob-watcher.py "$obw/ob-watcher"
-  cp -r scripts/obwatch/{orderbook.html,sybil_attack_calculations.py,vendor} "$obw/" || true
-  chmod +x "$out/bin/"* "$obw/ob-watcher" || true
+  cp scripts/obwatch/ob-watcher.py  "$out/bin/jm-ob-watcher"
+  cp -r scripts/obwatch/{orderbook.html,sybil_attack_calculations.py,vendor} "$out/bin/" || true
+  chmod +x "$out/bin/"* || true
   patchShebangs "$out/bin"
-  patchShebangs "$obw"
-  ln -s "$obw/ob-watcher" "$out/bin/jm-ob-watcher"
 '';
 
 
