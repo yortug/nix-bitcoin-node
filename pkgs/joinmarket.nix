@@ -3,8 +3,7 @@
 
 let
 
-
-pkgs-old = import old-nixpkgs { system = pkgs.system; };
+pkgs-old = import old-nixpkgs { inherit (pkgs.stdenv.hostPlatform) system; };
 
 chromalog = pkgs-old.python3Packages.buildPythonPackage rec { 
   pname = "chromalog";
