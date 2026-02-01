@@ -33,6 +33,31 @@ let
 
   datumConfigFile = pkgs.writeText "datum_gateway_config.json" (builtins.toJSON datumConfig);
 
+  joinmarketConfig = {
+    BLOCKCHAIN = {
+      rpc_port          = "8332";
+      rpc_cookie_file   = "/home/${secrets.username}/.bitcoin/.cookie";
+      rpc_wallet_file   = "joinmarket_wallet";
+      absurd_fee_per_kb = "150000";
+    };
+    # Add more sections/keys only as needed, e.g.
+    # POLICY = {
+    #   max_cj_fee_abs = "0.001";
+    #   max_cj_fee_rel = "0.003";
+    # };
+  };
+  
+  applyJoinmarketConfig = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (section: attrs:
+      lib.concatStringsSep "\n" (
+        lib.mapAttrsToList (key: val: ''
+          crudini --set /home/${secrets.username}/.joinmarket/joinmarket.cfg ${section} ${key} ${toString val}
+        '') attrs
+      )
+    ) joinmarketConfig
+  );
+
+
 in
 {
   imports = [
@@ -244,6 +269,50 @@ in
       BTCEXP_ELECTRUM_SERVERS = "tcp://127.0.0.1:50001"; # can be changed to tls://...:50002 if needed
       BTCEXP_PRIVACY_MODE = "true";
       BTCEXP_NO_RATES = "true";
+    };
+  };
+
+  systemd.user.services.joinmarket-init-config = {
+    description = "Initialize and configure JoinMarket config";
+    after = [
+      "bitcoind-default.service"
+      "network.target"
+    ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      User = secrets.username;
+      Group = secrets.username;
+      WorkingDirectory = "/home/${secrets.username}";
+      ExecStart = pkgs.writeShellScript "jm-init-config" ''
+        set -euo pipefail
+
+        CFG_FILE="/home/${secrets.username}/.joinmarket/joinmarket.cfg"
+
+        # if config file is missing... create it! 
+        if [[ ! -f "$CFG_FILE" ]]; then
+          echo "joinmarket.cfg missing — running jm-wallet-tool command to create it"
+          ${joinmarket}/bin/jm-wallet-tool || true
+        fi
+
+        # if the config file exists... apply the custom config options! 
+        if [[ -f "$CFG_FILE" ]]; then
+          echo "Applying custom specified JoinMarket config options..."
+          ${applyJoinmarketConfig}
+          echo "Overrides applied."
+        else
+          echo "Warning: joinmarket.cfg still missing after trigger — skipping overrides"
+        fi
+      '';
+      Type = "oneshot";
+      RemainAfterExit = true;
+      TimeoutStartSec = 30;
+      StandardOutput = "syslog";
+      StandardError = "syslog";
+      SyslogIdentifier = "joinmarket-init-config";
+      PrivateTmp = true;
+      ProtectSystem = "full";
+      NoNewPrivileges = true;
+      MemoryDenyWriteExecute = true;
     };
   };
 
