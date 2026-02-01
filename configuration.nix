@@ -3,6 +3,7 @@
   lib,
   pkgs,
   datum,
+  joinmarket,
   ...
 }:
 let
@@ -31,6 +32,36 @@ let
   };
 
   datumConfigFile = pkgs.writeText "datum_gateway_config.json" (builtins.toJSON datumConfig);
+
+  joinmarketConfig = {
+    BLOCKCHAIN = {
+      rpc_port          = "8332";
+      rpc_cookie_file   = "/home/${secrets.username}/.bitcoin/.cookie";
+      rpc_wallet_file   = "joinmarket_wallet";
+    };
+    POLICY = {
+      absurd_fee_per_kb = "20000";
+      #max_cj_fee_abs = "0.001";
+      #max_cj_fee_rel = "0.003";
+    };
+  };
+  
+  applyJoinmarketConfig = lib.concatStringsSep "\n" (
+    # remove user / pwd options, as they default are NOT commented out, but we are using .cookie
+    [
+      "crudini --del /home/${secrets.username}/.joinmarket/joinmarket.cfg BLOCKCHAIN rpc_user || true"
+      "crudini --del /home/${secrets.username}/.joinmarket/joinmarket.cfg BLOCKCHAIN rpc_password || true"
+    ]
+    ++
+    lib.mapAttrsToList (section: attrs:
+      lib.concatStringsSep "\n" (
+        lib.mapAttrsToList (key: val: ''
+          crudini --set /home/${secrets.username}/.joinmarket/joinmarket.cfg ${section} ${key} ${toString val}
+        '') attrs
+      )
+    ) joinmarketConfig
+  );
+
 
 in
 {
@@ -246,6 +277,51 @@ in
     };
   };
 
+  systemd.services.joinmarket-init-config = {
+    description = "Initialize and configure JoinMarket config";
+    after = [
+      "bitcoind-default.service"
+      "network.target"
+    ];
+    wantedBy = [ "multi-user.target" ];
+    path = with pkgs; [ crudini ];
+    serviceConfig = {
+      User = secrets.username;
+      Group = secrets.username;
+      WorkingDirectory = "/home/${secrets.username}";
+      ExecStart = pkgs.writeShellScript "jm-init-config" ''
+        set -euo pipefail
+
+        CFG_FILE="/home/${secrets.username}/.joinmarket/joinmarket.cfg"
+
+        # if config file is missing... create it! 
+        if [[ ! -f "$CFG_FILE" ]]; then
+          echo "joinmarket.cfg missing — running jm-wallet-tool command to create it"
+          ${joinmarket}/bin/jm-wallet-tool || true
+        fi
+
+        # if the config file exists... apply the custom config options! 
+        if [[ -f "$CFG_FILE" ]]; then
+          echo "Applying custom specified JoinMarket config options..."
+          ${applyJoinmarketConfig}
+          echo "Overrides applied."
+        else
+          echo "Warning: joinmarket.cfg still missing after trigger — skipping overrides"
+        fi
+      '';
+      Type = "oneshot";
+      RemainAfterExit = true;
+      TimeoutStartSec = 30;
+      StandardOutput = "syslog";
+      StandardError = "syslog";
+      SyslogIdentifier = "joinmarket-init-config";
+      PrivateTmp = true;
+      ProtectSystem = "full";
+      NoNewPrivileges = true;
+      MemoryDenyWriteExecute = true;
+    };
+  };
+
   programs.bash = {
     #enable = true; # deprecated?
     promptInit = ''
@@ -292,6 +368,8 @@ in
     datum
     psmisc
     btc-rpc-explorer
+    joinmarket
+    crudini
   ];
 
   system.stateVersion = "25.05";

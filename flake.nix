@@ -11,10 +11,19 @@
     };
     # grab bip-110 specific pre-release source below, need to change commit hash when updated
     nixpkgs-bip110.url = "github:NixOS/nixpkgs/pull/482673/head";
+    joinmarket-src = {
+      url = "github:JoinMarket-Org/joinmarket-clientserver/v0.9.11";
+      flake = false;
+    };
+    old-nixpkgs = {
+      url = "github:NixOS/nixpkgs/nixos-25.05";
+      flake = false;
+    };
+    
   };
 
   outputs =
-    { self, nixpkgs, datum-src, nixpkgs-bip110, ... }@inputs: let
+    { self, nixpkgs, datum-src, nixpkgs-bip110, joinmarket-src, old-nixpkgs, ... }@inputs: let
       secrets = import ./secrets.nix;
       system = "x86_64-linux";
 
@@ -35,18 +44,28 @@
         '';
       };
       
+      joinmarket = pkgs.callPackage ./pkgs/joinmarket.nix {
+        inherit (inputs) joinmarket-src old-nixpkgs;
+        secp256k1 = pkgs.secp256k1;
+      };
+
+      
     in {
       packages = {
         ${system} = {
           datum = datum;
+          joinmarket = joinmarket;
         };
       };
       
       nixosConfigurations."${secrets.hostname}" = nixpkgs.lib.nixosSystem {
         pkgs = nixpkgs.legacyPackages.${system};
-        specialArgs = { inherit datum; };
+        specialArgs = { inherit datum joinmarket; };
         modules = [
           ./configuration.nix
+          ({ config, ... }: {
+            _module.args.joinmarket = self.packages.${system}.joinmarket;
+          })
           {
             nixpkgs.overlays = [
               (final: prev: {

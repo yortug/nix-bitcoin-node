@@ -17,13 +17,30 @@
         "url": "https://github.com/yortug/datum_gateway.git"
       }
     },
+    "joinmarket-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1708593180,
+        "narHash": "sha256-sYHhhp9BZz8udJuVAfwdt474OQPiye2ae5DOn5v5yEQ=",
+        "owner": "JoinMarket-Org",
+        "repo": "joinmarket-clientserver",
+        "rev": "f4c2b1b86857762e1ca2fa6442bceb347523efda",
+        "type": "github"
+      },
+      "original": {
+        "owner": "JoinMarket-Org",
+        "ref": "v0.9.11",
+        "repo": "joinmarket-clientserver",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1769170682,
-        "narHash": "sha256-oMmN1lVQU0F0W2k6OI3bgdzp2YOHWYUAw79qzDSjenU=",
+        "lastModified": 1769461804,
+        "narHash": "sha256-msG8SU5WsBUfVVa/9RPLaymvi5bI8edTavbIq3vRlhI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c5296fdd05cfa2c187990dd909864da9658df755",
+        "rev": "bfc1b8a4574108ceef22f02bafcf6611380c100d",
         "type": "github"
       },
       "original": {
@@ -49,11 +66,30 @@
         "type": "github"
       }
     },
+    "old-nixpkgs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1767313136,
+        "narHash": "sha256-16KkgfdYqjaeRGBaYsNrhPRRENs0qzkQVUooNHtoy2w=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "ac62194c3917d5f474c1a844b6fd6da2db95077d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-25.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "datum-src": "datum-src",
+        "joinmarket-src": "joinmarket-src",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-bip110": "nixpkgs-bip110"
+        "nixpkgs-bip110": "nixpkgs-bip110",
+        "old-nixpkgs": "old-nixpkgs"
       }
     }
   },
