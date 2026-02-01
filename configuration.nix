@@ -38,16 +38,21 @@ let
       rpc_port          = "8332";
       rpc_cookie_file   = "/home/${secrets.username}/.bitcoin/.cookie";
       rpc_wallet_file   = "joinmarket_wallet";
-      absurd_fee_per_kb = "150000";
     };
-    # Add more sections/keys only as needed, e.g.
-    # POLICY = {
-    #   max_cj_fee_abs = "0.001";
-    #   max_cj_fee_rel = "0.003";
-    # };
+    POLICY = {
+      absurd_fee_per_kb = "20000";
+      #max_cj_fee_abs = "0.001";
+      #max_cj_fee_rel = "0.003";
+    };
   };
   
   applyJoinmarketConfig = lib.concatStringsSep "\n" (
+    # remove user / pwd options, as they default are NOT commented out, but we are using .cookie
+    [
+      "crudini --del /home/${secrets.username}/.joinmarket/joinmarket.cfg BLOCKCHAIN rpc_user || true"
+      "crudini --del /home/${secrets.username}/.joinmarket/joinmarket.cfg BLOCKCHAIN rpc_password || true"
+    ]
+    ++
     lib.mapAttrsToList (section: attrs:
       lib.concatStringsSep "\n" (
         lib.mapAttrsToList (key: val: ''
@@ -272,13 +277,14 @@ in
     };
   };
 
-  systemd.user.services.joinmarket-init-config = {
+  systemd.services.joinmarket-init-config = {
     description = "Initialize and configure JoinMarket config";
     after = [
       "bitcoind-default.service"
       "network.target"
     ];
     wantedBy = [ "multi-user.target" ];
+    path = with pkgs; [ crudini ];
     serviceConfig = {
       User = secrets.username;
       Group = secrets.username;
