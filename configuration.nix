@@ -41,6 +41,7 @@ let
     };
     POLICY = {
       absurd_fee_per_kb = "20000";
+      taker_utxo_retries = "8";
       #max_cj_fee_abs = "0.001";
       #max_cj_fee_rel = "0.003";
     };
