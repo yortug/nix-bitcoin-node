@@ -10,7 +10,7 @@
       flake = false;
     };
     # grab bip-110 specific pre-release source below, need to change commit hash when updated
-    nixpkgs-bip110.url = "github:NixOS/nixpkgs/pull/482673/head";
+    nixpkgs-bip110.url = "github:NixOS/nixpkgs/pull/491785/head";
     joinmarket-src = {
       url = "github:JoinMarket-Org/joinmarket-clientserver/v0.9.11";
       flake = false;
