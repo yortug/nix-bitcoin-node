@@ -44,7 +44,7 @@
       
       joinmarket = pkgs.callPackage ./pkgs/joinmarket.nix {
         inherit (inputs) joinmarket-src old-nixpkgs;
-        secp256k1 = old-nixpkgs.legacyPackages.${system}.secp256k1;
+        secp256k1 = (import old-nixpkgs { inherit system; }).secp256k1;
       };
 
       
