@@ -9,8 +9,6 @@
       url = "git+https://github.com/yortug/datum_gateway.git?rev=eb63a28bc9634052fb6b9218b511939141a2c500";
       flake = false;
     };
-    # grab bip-110 specific pre-release source below, need to change commit hash when updated
-    nixpkgs-bip110.url = "github:NixOS/nixpkgs/pull/491785/head";
     joinmarket-src = {
       url = "github:JoinMarket-Org/joinmarket-clientserver/v0.9.11";
       flake = false;
@@ -23,7 +21,7 @@
   };
 
   outputs =
-    { self, nixpkgs, datum-src, nixpkgs-bip110, joinmarket-src, old-nixpkgs, ... }@inputs: let
+    { self, nixpkgs, datum-src, joinmarket-src, old-nixpkgs, ... }@inputs: let
       secrets = import ./secrets.nix;
       system = "x86_64-linux";
 
@@ -66,13 +64,6 @@
           ({ config, ... }: {
             _module.args.joinmarket = self.packages.${system}.joinmarket;
           })
-          {
-            nixpkgs.overlays = [
-              (final: prev: {
-                bitcoin-knots-bip110 = nixpkgs-bip110.legacyPackages.${prev.stdenv.hostPlatform.system}.bitcoin-knots-bip110;
-              })
-            ];
-          }
         ];
       };
     };

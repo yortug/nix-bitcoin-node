@@ -146,8 +146,8 @@ in
 
   services.bitcoind.default = {
     enable = true;
-    #package = pkgs.bitcoind-knots;
-    package = pkgs.bitcoin-knots-bip110;
+    package = pkgs.bitcoind-knots;
+    #package = pkgs.bitcoin-knots-bip110;
     user = secrets.username;
     group = secrets.username;
     dataDir = "/home/${secrets.username}/.bitcoin";
