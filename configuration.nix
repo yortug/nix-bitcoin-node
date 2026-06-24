@@ -173,6 +173,8 @@ in
       maxmempool=1000
       blockreconstructionextratxn=1000000
       blocknotify=killall -USR1 datum_gateway
+      # bip-110/rdts explicit confirmation
+      consensusrules=rdts
       # added to prevent / fix corrupt chainstate (hopefully)
       shutdownonreboot=1
       #reindex-chainstate=1
