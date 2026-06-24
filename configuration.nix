@@ -362,7 +362,7 @@ in
       };
     })
     wget
-    neofetch
+    fastfetch
     git
     tor
     bitcoind-knots
