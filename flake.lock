@@ -36,32 +36,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1769461804,
-        "narHash": "sha256-msG8SU5WsBUfVVa/9RPLaymvi5bI8edTavbIq3vRlhI=",
+        "lastModified": 1781577229,
+        "narHash": "sha256-lrp67w8AulE9Ks53n27I45ADSzbOCn4H+CNW1Ck8B+8=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "bfc1b8a4574108ceef22f02bafcf6611380c100d",
+        "rev": "567a49d1913ce81ac6e9582e3553dd90a955875f",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
         "ref": "nixos-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-bip110": {
-      "locked": {
-        "lastModified": 1771424952,
-        "narHash": "sha256-pup8yY2qgxJjvD02T5koiv/NiKOpP3v+pdzLJcv0k8U=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "51884a51310faa464ab32a158673aec5db1f34ca",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "pull/491785/head",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -88,7 +72,6 @@
         "datum-src": "datum-src",
         "joinmarket-src": "joinmarket-src",
         "nixpkgs": "nixpkgs",
-        "nixpkgs-bip110": "nixpkgs-bip110",
         "old-nixpkgs": "old-nixpkgs"
       }
     }
