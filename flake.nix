@@ -17,11 +17,15 @@
       url = "github:NixOS/nixpkgs/nixos-25.05";
       flake = false;
     };
+    knots-prerdts-src = {
+      url = "https://github.com/bitcoinknots/bitcoin/releases/download/v29.3.knots20260507/bitcoin-29.3.knots20260507-x86_64-linux-gnu.tar.gz";
+      flake = false;
+    };
     
   };
 
   outputs =
-    { self, nixpkgs, datum-src, joinmarket-src, old-nixpkgs, ... }@inputs: let
+    { self, nixpkgs, datum-src, joinmarket-src, old-nixpkgs, knots-prerdts-src, ... }@inputs: let
       secrets = import ./secrets.nix;
       system = "x86_64-linux";
 
@@ -46,6 +50,24 @@
         inherit (inputs) joinmarket-src old-nixpkgs;
         secp256k1 = (import old-nixpkgs { inherit system; }).secp256k1;
       };
+      
+
+      bitcoind-knots-prerdts = pkgs.stdenv.mkDerivation {
+        pname = "bitcoind-knots-prerdts";
+        version = "29.3.knots20260507";
+        src = knots-prerdts-src;
+        nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+        buildInputs = [ pkgs.stdenv.cc.cc pkgs.zlib ];
+        dontConfigure = true;
+        dontBuild = true;
+        installPhase = ''
+          mkdir -p $out/bin
+          install -Dm755 bin/bitcoind       $out/bin/bitcoind
+          install -Dm755 bin/bitcoin-cli    $out/bin/bitcoin-cli
+          install -Dm755 bin/bitcoin-tx     $out/bin/bitcoin-tx
+          install -Dm755 bin/bitcoin-wallet $out/bin/bitcoin-wallet
+        '';
+      };
 
       
     in {
@@ -58,7 +80,7 @@
       
       nixosConfigurations."${secrets.hostname}" = nixpkgs.lib.nixosSystem {
         pkgs = nixpkgs.legacyPackages.${system};
-        specialArgs = { inherit datum joinmarket; };
+        specialArgs = { inherit datum joinmarket bitcoind-knots-prerdts; };
         modules = [
           ./configuration.nix
           ({ config, ... }: {

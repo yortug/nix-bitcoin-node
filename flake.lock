@@ -34,6 +34,19 @@
         "type": "github"
       }
     },
+    "knots-prerdts-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1778175467,
+        "narHash": "sha256-vR8jj/56EDmOvuZ3/GWTq6cvMMGvbqb17ILvE/b9w3E=",
+        "type": "tarball",
+        "url": "https://github.com/bitcoinknots/bitcoin/releases/download/v29.3.knots20260507/bitcoin-29.3.knots20260507-x86_64-linux-gnu.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://github.com/bitcoinknots/bitcoin/releases/download/v29.3.knots20260507/bitcoin-29.3.knots20260507-x86_64-linux-gnu.tar.gz"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1781577229,
@@ -71,6 +84,7 @@
       "inputs": {
         "datum-src": "datum-src",
         "joinmarket-src": "joinmarket-src",
+        "knots-prerdts-src": "knots-prerdts-src",
         "nixpkgs": "nixpkgs",
         "old-nixpkgs": "old-nixpkgs"
       }

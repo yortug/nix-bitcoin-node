@@ -4,6 +4,7 @@
   pkgs,
   datum,
   joinmarket,
+  bitcoind-knots-prerdts,
   ...
 }:
 let
@@ -192,7 +193,7 @@ in
 
   services.bitcoind.bitcoin-sha256 = {
     enable = true;
-    package = pkgs.bitcoind-knots;
+    package = bitcoind-knots-prerdts;
     user = secrets.username;
     group = secrets.username;
     dataDir = "/home/${secrets.username}/.bitcoin-sha256";
@@ -219,6 +220,7 @@ in
       blockreconstructionextratxn=1000000
       blocknotify=killall -USR1 datum_gateway
       shutdownonreboot=1
+      softwareexpiry=0
     '';
   };
   
