@@ -11,7 +11,7 @@ let
 
   datumConfig = {
     bitcoind = {
-      rpccookiefile = "/home/${secrets.username}/.bitcoin/.cookie";
+      rpccookiefile = "/home/${secrets.username}/.bitcoin-sha256/.cookie";
       rpcurl = "http://127.0.0.1:8332";
     };
     stratum = {
@@ -36,7 +36,7 @@ let
   joinmarketConfig = {
     BLOCKCHAIN = {
       rpc_port          = "8332";
-      rpc_cookie_file   = "/home/${secrets.username}/.bitcoin/.cookie";
+      rpc_cookie_file   = "/home/${secrets.username}/.bitcoin-sha256/.cookie";
       rpc_wallet_file   = "joinmarket_wallet";
     };
     POLICY = {
@@ -151,11 +151,12 @@ in
     user = secrets.username;
     group = secrets.username;
     dataDir = "/home/${secrets.username}/.bitcoin";
-    dbCache = 8000; # can adjust (down) post-sync if needed
+    dbCache = 4000; # can adjust (down) post-sync if needed
     extraConfig = ''
       server=1
       txindex=1
-      rpcport=8332
+      rpcport=18332
+      port=18333
       rpcbind=0.0.0.0
       rpcallowip=127.0.0.1
       rpcallowip=10.0.0.0/8
@@ -167,12 +168,6 @@ in
       listen=1
       bind=127.0.0.1
       onlynet=onion
-      # extra config options suggested / required for datum solo mining
-      blockmaxsize=3985000
-      blockmaxweight=3985000
-      maxmempool=1000
-      blockreconstructionextratxn=1000000
-      blocknotify=killall -USR1 datum_gateway
       # bip-110/rdts explicit confirmation
       consensusrules=rdts
       # added to prevent / fix corrupt chainstate (hopefully)
@@ -195,20 +190,64 @@ in
     };
   };
 
+  services.bitcoind.bitcoin-sha256 = {
+    enable = true;
+    package = pkgs.bitcoind-knots;
+    user = secrets.username;
+    group = secrets.username;
+    dataDir = "/home/${secrets.username}/.bitcoin-sha256";
+    dbCache = 4000;
+    extraConfig = ''
+      server=1
+      txindex=1
+      rpcport=8332
+      port=8333
+      rpcbind=0.0.0.0
+      rpcallowip=127.0.0.1
+      rpcallowip=10.0.0.0/8
+      rpcallowip=172.0.0.0/8
+      rpcallowip=192.0.0.0/8
+      whitelist=127.0.0.1
+      rpcauth=${secrets.btc_rpc_username}:${secrets.btc_rpc_password_hashed}
+      proxy=127.0.0.1:9050
+      listen=1
+      bind=127.0.0.1
+      onlynet=onion
+      blockmaxsize=3985000
+      blockmaxweight=3985000
+      maxmempool=1000
+      blockreconstructionextratxn=1000000
+      blocknotify=killall -USR1 datum_gateway
+      shutdownonreboot=1
+    '';
+  };
+  
+  systemd.services.bitcoind-bitcoin-sha256 = {
+    after = [ "tor.service" ];
+    wants = [ "tor.service" ];
+    serviceConfig = {
+      TimeoutStopSec = "30min";
+      TimeoutStartSec = "30min";
+      Restart = "on-failure";
+      RestartSec = "10s";
+      KillMode = "process";
+    };
+  };
+
   systemd.services.electrs = {
     description = "Electrs Electrum Server";
     after = [
-      "bitcoind-default.service"
+      "bitcoind-bitcoin-sha256.service"
       "network.target"
     ];
     wantedBy = [ "multi-user.target" ];
-    requires = [ "bitcoind-default.service" ];
+    requires = [ "bitcoind-bitcoin-sha256.service" ];
     serviceConfig = {
       User = secrets.username;
       Group = secrets.username;
       WorkingDirectory = "/home/${secrets.username}";
       ExecStartPre = "${pkgs.bash}/bin/bash -c 'while [ ! -f /home/${secrets.username}/.bitcoin/.cookie ]; do echo \"Waiting for bitcoind cookie...\"; sleep 1; done'"; # custom script to wait for .cookie
-      ExecStart = "${pkgs.electrs}/bin/electrs --log-filters=INFO --cookie-file=/home/${secrets.username}/.bitcoin/.cookie --db-dir=/home/${secrets.username}/electrs_db --electrum-rpc-addr=0.0.0.0:50001 --daemon-rpc-addr=127.0.0.1:8332";
+      ExecStart = "${pkgs.electrs}/bin/electrs --log-filters=INFO --cookie-file=/home/${secrets.username}/.bitcoin-sha256/.cookie --db-dir=/home/${secrets.username}/electrs_db --electrum-rpc-addr=0.0.0.0:50001 --daemon-rpc-addr=127.0.0.1:8332";
       Restart = "always";
       RestartSec = 60;
       # extra hardening measures follow
@@ -222,11 +261,11 @@ in
   systemd.services.datum_gateway = {
     description = "DATUM Gateway for Bitcoin Mining";
     after = [
-      "bitcoind-default.service"
+      "bitcoind-bitcoin-sha256.service"
       "network.target"
     ];
     wantedBy = [ "multi-user.target" ];
-    wants = [ "bitcoind-default.service" ];
+    wants = [ "bitcoind-bitcoin-sha256.service" ];
     serviceConfig = {
       User = secrets.username;
       Group = secrets.username;
@@ -247,16 +286,16 @@ in
 
   systemd.services.btc-rpc-explorer = {
     description = "BTC RPC Explorer";
-    after = [ "bitcoind-default.service" "network.target" "electrs.service" ];
+    after = [ "bitcoind-bitcoin-sha256.service" "network.target" "electrs.service" ];
     wantedBy = [ "multi-user.target" ];
-    requires = [ "bitcoind-default.service" ];
+    requires = [ "bitcoind-bitcoin-sha256.service" ];
     wants = [ "electrs.service" ];
 
     serviceConfig = {
       User = secrets.username;
       Group = secrets.username;
       WorkingDirectory = "/home/${secrets.username}";
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'while [ ! -f /home/${secrets.username}/.bitcoin/.cookie ]; do echo \"Waiting for bitcoind cookie...\"; sleep 1; done'";
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'while [ ! -f /home/${secrets.username}/.bitcoin-sha256/.cookie ]; do echo \"Waiting for bitcoind cookie...\"; sleep 1; done'";
       ExecStart = "${pkgs.btc-rpc-explorer}/bin/btc-rpc-explorer";
       Restart = "always";
       RestartSec = 10;
@@ -273,7 +312,7 @@ in
       BTCEXP_PORT = "3002";
       BTCEXP_BITCOIND_HOST = "127.0.0.1";
       BTCEXP_BITCOIND_PORT = "8332";
-      BTCEXP_BITCOIND_COOKIE = "/home/${secrets.username}/.bitcoin/.cookie";
+      BTCEXP_BITCOIND_COOKIE = "/home/${secrets.username}/.bitcoin-sha256/.cookie";
       BTCEXP_ADDRESS_API = "electrum";
       BTCEXP_ELECTRUM_SERVERS = "tcp://127.0.0.1:50001"; # can be changed to tls://...:50002 if needed
       BTCEXP_PRIVACY_MODE = "true";
@@ -284,7 +323,7 @@ in
   systemd.services.joinmarket-init-config = {
     description = "Initialize and configure JoinMarket config";
     after = [
-      "bitcoind-default.service"
+      "bitcoind-bitcoin-sha256.service"
       "network.target"
     ];
     wantedBy = [ "multi-user.target" ];
