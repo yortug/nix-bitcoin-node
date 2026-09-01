@@ -34,6 +34,19 @@
         "type": "github"
       }
     },
+    "knots-blake-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1788214395,
+        "narHash": "sha256-GZuH5PbojzlZqkGRw41VPYETQdVJiPyOYIWts2LSShk=",
+        "type": "tarball",
+        "url": "https://test.bitcoinknots.org/~luke-jr/programs/bitcoin/files/bitcoin-knots/29.x/29.4.1.knots20260508/test/rc5/bitcoin-29.4.1.knots20260508rc5-x86_64-linux-gnu.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://test.bitcoinknots.org/~luke-jr/programs/bitcoin/files/bitcoin-knots/29.x/29.4.1.knots20260508/test/rc5/bitcoin-29.4.1.knots20260508rc5-x86_64-linux-gnu.tar.gz"
+      }
+    },
     "knots-prerdts-src": {
       "flake": false,
       "locked": {
@@ -84,6 +97,7 @@
       "inputs": {
         "datum-src": "datum-src",
         "joinmarket-src": "joinmarket-src",
+        "knots-blake-src": "knots-blake-src",
         "knots-prerdts-src": "knots-prerdts-src",
         "nixpkgs": "nixpkgs",
         "old-nixpkgs": "old-nixpkgs"

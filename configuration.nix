@@ -5,7 +5,8 @@
   datum,
   joinmarket,
   bitcoind-knots-prerdts,
-  ...
+  bitcoind-knots-blake,
+   ...
 }:
 let
   secrets = import ./secrets.nix;
@@ -145,13 +146,12 @@ in
     };
   };
 
-  services.bitcoind.default = {
+  services.bitcoind.bitcoin-blake2b = {
     enable = true;
-    package = pkgs.bitcoind-knots;
-    #package = pkgs.bitcoin-knots-bip110;
+    package = bitcoind-knots-blake;
     user = secrets.username;
     group = secrets.username;
-    dataDir = "/home/${secrets.username}/.bitcoin";
+    dataDir = "/home/${secrets.username}/.bitcoin-blake2b";
     dbCache = 4000; # can adjust (down) post-sync if needed
     extraConfig = ''
       server=1
@@ -169,17 +169,22 @@ in
       listen=1
       bind=127.0.0.1
       onlynet=onion
+      maxoutboundconnections=16
       # bip-110/rdts explicit confirmation
-      consensusrules=rdts
+      #consensusrules=rdts
+      blake2b_headline=8-30 NYPost Deride And Conquer
       # added to prevent / fix corrupt chainstate (hopefully)
       shutdownonreboot=1
       #reindex-chainstate=1
       #reindex=1
+      addnode=qhujyfxwz2mexymfgup42gnxjv47fyy22d4gzsis2yqxmzwtxsvrelyd.onion:8333
+      addnode=adq3l7pjwpowiq2see3zafmsgkfqrus375meczhz5be47xciq5rpzcqd.onion:8333
+      addnode=l6qbokl7xz4gucrj4ybwbct2axly36mmdcs67wt35xsoq6brk36uwxid.onion:8333
     '';
   };
 
   # ensures bitcoind doesn't start until tor is up and running - makes sense
-  systemd.services.bitcoind-default = {
+  systemd.services.bitcoind-bitcoin-blake2b = {
     after = [ "tor.service" ];
     wants = [ "tor.service" ];
     serviceConfig = {
